@@ -126,8 +126,9 @@ if user_query:
     with st.spinner("Thinking..."):
         query_embedding = generate_embedding(user_query)
         retrieved_docs = vector_search(scope, query_embedding)
-        prompt = build_prompt(user_query, retrieved_docs)
-        answer = generate_answer(prompt)
+        #prompt = build_prompt(user_query, retrieved_docs)
+        #answer = generate_answer(prompt)
 
-    st.subheader("Answer")
-    st.write(answer)
+    #st.subheader("Answer")
+    #st.write(answer)
+    st.write(retrieved_docs)
