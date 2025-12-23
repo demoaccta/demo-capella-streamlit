@@ -6,6 +6,7 @@ from couchbase.auth import PasswordAuthenticator
 from couchbase.options import ClusterOptions
 from couchbase.vector_search import VectorQuery, VectorSearch
 from couchbase.search import SearchRequest
+from datetime import timedelta
 
 import os
 
