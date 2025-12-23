@@ -4,7 +4,9 @@ import openai
 from couchbase.cluster import Cluster
 from couchbase.auth import PasswordAuthenticator
 from couchbase.options import ClusterOptions
-from couchbase.search import SearchQuery, VectorQuery
+from couchbase.vector_search import VectorQuery, VectorSearch
+from couchbase.search import SearchRequest
+
 import os
 
 # Load env variables
