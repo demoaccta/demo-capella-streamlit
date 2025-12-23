@@ -31,7 +31,7 @@ def get_cb_cluster():
       config_idle_redial_timeout=timedelta(seconds=20)
     )
     cluster = Cluster(CB_CONN_STR, options)
-    cluster.wait_until_ready(10)
+    cluster.wait_until_ready(timedelta(seconds=10))
     return cluster
 
 cluster = get_cb_cluster()
