@@ -53,12 +53,10 @@ def vector_search(query_embedding, top_k=5):
         num_candidates=top_k
     )
 
-    search_query = SearchQuery(
-        index="idx_cvi_balanceposition",
-        vector=vector_query
-    )
+    vector_search = VectorSearch.from_vector_query(vector_query)
+    request = SearchRequest.create(vector_search)
 
-    result = scope.search(search_query)
+    result = scope.search("idx_cvi_balanceposition", request)
 
     docs = []
     for row in result.rows():
