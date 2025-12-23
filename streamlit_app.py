@@ -3,7 +3,7 @@ import streamlit as st
 import openai
 from couchbase.cluster import Cluster
 from couchbase.auth import PasswordAuthenticator
-from couchbase.options import ClusterOptions
+from couchbase.options import ClusterOptions, QueryOptions
 from couchbase.vector_search import VectorQuery, VectorSearch
 from couchbase.search import SearchRequest
 from datetime import timedelta
@@ -47,24 +47,48 @@ def generate_embedding(text: str):
     )
     return response.data[0].embedding
 
-def vector_search(query_embedding, top_k=5):
-    vector_query = VectorQuery(
-        field_name="embedding",
-        vector=query_embedding,
-        num_candidates=top_k
+#def vector_search(query_embedding, top_k=5):
+ #   vector_query = VectorQuery(
+  #     vector=query_embedding,
+   #     num_candidates=top_k
+    #)
+
+    #vector_search = VectorSearch.from_vector_query(vector_query)
+    #request = SearchRequest.create(vector_search)
+
+    #result = scope.search("idx_cvi_balanceposition", request)
+
+    #docs = []
+    #for row in result.rows():
+     #   docs.append(row.fields.get("content", ""))
+
+    #return docs
+
+def vector_search(scope, query_embedding, top_k=5):
+    sql = """
+    SELECT bp.*
+    FROM `rag_capella`.`standard_reports`.`balance_position` AS bp
+    WHERE bp.embedding IS NOT NULL
+    ORDER BY VECTOR_DISTANCE(bp.embedding, $embedding, "dot")
+    LIMIT $top_k
+    """
+
+    result = scope.query(
+        sql,
+        QueryOptions(
+            named_parameters={
+                "embedding": query_embedding,
+                "top_k": top_k
+            }
+        )
     )
 
-    vector_search = VectorSearch.from_vector_query(vector_query)
-    request = SearchRequest.create(vector_search)
-
-    result = scope.search("idx_cvi_balanceposition", request)
-
     docs = []
-    for row in result.rows():
-        docs.append(row.fields.get("content", ""))
+    for row in result:
+        docs.append(row)
 
     return docs
-
+    
 # RAG Prompt Construction
 
 def build_prompt(question, contexts):
