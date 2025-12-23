@@ -69,7 +69,7 @@ def vector_search(scope, query_embedding, top_k=5):
     SELECT bp.*
     FROM `rag_capella`.`standard_reports`.`balance_position` AS bp
     WHERE bp.embedding IS NOT NULL
-    ORDER BY VECTOR_DISTANCE(bp.embedding, $embedding, "dot") DESC
+    ORDER BY VECTOR_DISTANCE(bp.embedding, $embedding, "dot")
     LIMIT $top_k
     """
     print(sql)
