@@ -55,7 +55,7 @@ def cached_embedding(text):
 # Vector Search
 def vector_search(scope, query_embedding, top_k=5):
     sql = """
-    SELECT bp.* AS bp
+    SELECT bp.* 
     FROM `rag_capella`.`standard_reports`.`balance_position` AS bp
     WHERE bp.embedding IS NOT NULL
     ORDER BY VECTOR_DISTANCE(bp.embedding, $embedding, "dot")
@@ -74,8 +74,7 @@ def vector_search(scope, query_embedding, top_k=5):
 
     docs = []
     for row in result:
-        bp=row["bp"]
-        docs.append(bp)
+        docs.append(row)
 
     return docs
     
