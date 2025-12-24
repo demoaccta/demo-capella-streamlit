@@ -74,8 +74,8 @@ def vector_search(scope, query_embedding, top_k=5):
 
     docs = []
     for row in result:
-        #docs.append(row)
-        docs.append(row.fields.get("content",""))
+        bp=row["bp"]
+        docs.append(bp)
 
     return docs
     
