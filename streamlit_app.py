@@ -146,4 +146,4 @@ if user_query:
         "answer": answer
     })
 
-    st.session_state.user_query = ""
+    #st.session_state.user_query = ""
