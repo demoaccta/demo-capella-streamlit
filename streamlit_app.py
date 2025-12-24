@@ -47,23 +47,12 @@ def generate_embedding(text: str):
     )
     return response.data[0].embedding
 
-#def vector_search(query_embedding, top_k=5):
- #   vector_query = VectorQuery(
-  #     vector=query_embedding,
-   #     num_candidates=top_k
-    #)
+# Cache Query Embedding
+@st.cache_data(show_spinner=False)
+def cached_embedding(text):
+    return generate_embedding(text)
 
-    #vector_search = VectorSearch.from_vector_query(vector_query)
-    #request = SearchRequest.create(vector_search)
-
-    #result = scope.search("idx_cvi_balanceposition", request)
-
-    #docs = []
-    #for row in result.rows():
-     #   docs.append(row.fields.get("content", ""))
-
-    #return docs
-
+# Vector Search
 def vector_search(scope, query_embedding, top_k=5):
     sql = """
     SELECT bp.*
@@ -120,11 +109,14 @@ def generate_answer(prompt):
 
 st.title("Couchbase Capella RAG Chatbot")
 
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
+    
 user_query = st.text_input("Ask a question")
 
 if user_query:
     with st.spinner("Thinking..."):
-        query_embedding = generate_embedding(user_query)
+        query_embedding = cached_embedding(user_query)
         retrieved_docs = vector_search(scope, query_embedding,top_k=1)
         prompt = build_prompt(user_query, str(retrieved_docs))
         answer = generate_answer(prompt)
@@ -132,3 +124,8 @@ if user_query:
     st.subheader("Answer")
     st.write(answer)
     st.write(retrieved_docs)
+
+    st.session_state.chat_history.append({
+        "question": user_query,
+        "answer": answer
+    })
