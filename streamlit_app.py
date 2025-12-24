@@ -125,7 +125,7 @@ user_query = st.text_input("Ask a question")
 if user_query:
     with st.spinner("Thinking..."):
         query_embedding = generate_embedding(user_query)
-        retrieved_docs = vector_search(scope, query_embedding,top_k=2)
+        retrieved_docs = vector_search(scope, query_embedding,top_k=1)
         prompt = build_prompt(user_query, str(retrieved_docs))
         answer = generate_answer(prompt)
 
