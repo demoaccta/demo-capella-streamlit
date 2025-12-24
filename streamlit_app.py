@@ -74,7 +74,8 @@ def vector_search(scope, query_embedding, top_k=5):
 
     docs = []
     for row in result:
-        docs.append(row)
+        #docs.append(row)
+        docs.append(row.fields.get("content",""))
 
     return docs
     
@@ -107,25 +108,43 @@ def generate_answer(prompt):
 
 # Streamlit UI layer
 
-st.title("Couchbase Capella RAG Chatbot")
-
+# Initialize Session State
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
-    
-user_query = st.text_input("Ask a question")
 
+st.set_page_config(page_title="Welcome to FOurSee CONVui", layout="centered")
+st.title("Welcome to FOurSee CONVui")
+
+# Render Existing Chat History
+for chat in st.session_state.chat_history:
+    with st.chat_message("user"):
+        st.markdown(chat["question"])
+
+    with st.chat_message("assistant"):
+        st.markdown(chat["answer"])
+    
+# Get User Input (Query)
+user_query = st.chat_input("Ask a question", key="user_query")
+
+# Process New Query 
 if user_query:
+    with st.chat_message("user"):
+        st.markdown(user_query)
     with st.spinner("Thinking..."):
         query_embedding = cached_embedding(user_query)
         retrieved_docs = vector_search(scope, query_embedding,top_k=1)
-        prompt = build_prompt(user_query, str(retrieved_docs))
+        prompt = build_prompt(user_query, retrieved_docs)
         answer = generate_answer(prompt)
+    with st.chat_message("assistant"):
+        st.markdown(answer)
+    #st.subheader("Answer")
+    #st.write(answer)
+    #st.write(retrieved_docs)
 
-    st.subheader("Answer")
-    st.write(answer)
-    st.write(retrieved_docs)
-
+    # Append to Session State
     st.session_state.chat_history.append({
         "question": user_query,
         "answer": answer
     })
+
+    st.session_state.user_query = ""
