@@ -83,7 +83,7 @@ def vector_search(scope, query_embedding, top_k=5):
 def build_prompt(question, contexts):
     context_text = "\n\n".join(contexts)
     prompt = f"""
-You are an assistant answering based only on the context below.
+You are a banking assistant answering based only on the context below.
 
 Context:
 {context_text}
